@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId('order_id')
                 ->constrained('orders')
                 ->onDelete('cascade');
-            $table->foreignId('pizza_id')
-                ->constrained('pizzas')
+            $table->string('pizza_id');
+            $table->foreign('pizza_id')
+                ->references('pizza_id')
+                ->on('pizzas')
                 ->onDelete('cascade');
             $table->integer('quantity');
             $table->timestamps();
