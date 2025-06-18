@@ -22,32 +22,54 @@
 
 
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter
+} from '@/components/ui/card'
 
-const cards = [
+const cards = ref([
   {
     title: 'Total Orders',
-    description: 'This month',
-    content: '1,284',
-    footer: 'Last updated 1 hour ago',
+    description: 'All',
+    content: '',
   },
   {
     title: 'Revenue',
     description: 'Gross sales',
-    content: '$12,540',
-    footer: 'Compared to last month',
+    content: '',
   },
   {
-    title: 'New Customers',
-    description: 'Registered users',
-    content: '432',
-    footer: '+12% growth',
+    title: 'Total Pizza Sold',
+    description: 'Total Quantity',
+    content: '',
   },
   {
     title: 'Top Product',
     description: 'Best seller',
-    content: 'Pepperoni Pizza',
-    footer: '420 orders',
+    content: '',
   },
-]
+])
+
+const fetchDashboardMetrics = async () => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/dashboard-metrics`)
+    const data = res.data
+
+    cards.value[0].content = data.total_orders.toLocaleString()
+    cards.value[1].content = `$${Number(data.revenue).toLocaleString()}`
+    cards.value[2].content = data.total_quantity.toLocaleString()
+    cards.value[3].content = data.top_pizza
+  } catch (error) {
+    console.error('Failed to fetch dashboard metrics', error)
+  }
+}
+
+onMounted(fetchDashboardMetrics)
+
 </script>
