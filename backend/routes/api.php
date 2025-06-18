@@ -22,4 +22,4 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('/upload/pizza-types', [CsvUploadController::class, 'uploadPizzaTypes']);
 Route::post('/upload/pizzas', [CsvUploadController::class, 'uploadPizzas']);
 Route::post('/upload/orders', [CsvUploadController::class, 'uploadOrders']);
-Route::post('/upload/order-items', [CsvUploadController::class, 'uploadOrderItems']);
+Route::post('/upload/order-details', [CsvUploadController::class, 'uploadOrderDetails']);

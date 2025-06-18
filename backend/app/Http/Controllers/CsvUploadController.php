@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UploadOrderDetails;
 use App\Http\Requests\UploadOrders;
 use App\Http\Requests\UploadPizzas;
 use App\Http\Requests\UploadPizzaTypes;
 use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\OrderDetail;
 use App\Models\Pizza;
 use App\Models\PizzaType;
 use Illuminate\Http\Request;
@@ -123,16 +124,72 @@ class CsvUploadController extends Controller
         ]);
     }
 
-    public function uploadOrderItems(Request $request)
+    public function uploadOrderDetails(UploadOrderDetails $request)
     {
-        $request->validate(['file' => 'required|file|mimes:csv,txt']);
-        $this->importCsv($request->file('file'), function ($data) {
-            OrderItem::updateOrCreate(
-                ['order_id' => $data['order_id'], 'pizza_id' => $data['pizza_id']],
-                ['quantity' => $data['quantity']]
-            );
-        });
-        return response()->json(['message' => 'Order items uploaded.']);
+        ini_set('max_execution_time', 300);
+        $requiredHeaders = ['order_details_id', 'order_id', 'pizza_id', 'quantity'];
+
+        $file = $request->file('file');
+        $result = validate_csv_headers($file, $requiredHeaders);
+
+        if (isset($result['error'])) {
+            return response()->json($result, 422);
+        }
+
+        $handle = $result['handle'];
+        $header = $result['header'];
+
+        $batchSize = 100; // Customize as needed
+        $batch = [];
+        $rowCount = 0;
+        $skipped = [];
+
+        while (($row = fgetcsv($handle)) !== false) {
+            $rowCount++;
+
+            if (count($row) !== count($header)) {
+                continue; // Skip malformed rows
+            }
+
+            $data = array_combine($header, $row);
+
+            // Skip rows with missing data
+            if (!$data || empty($data['order_details_id'])) {
+                $skipped[] = $data;
+                continue;
+            }
+
+            // ✅ Check foreign key existence
+            if (!Order::where('id', $data['order_id'])->exists()) {
+                $skipped[] = $data;
+                continue; // or log or collect invalid rows
+            }
+
+            if (!Pizza::where('pizza_id', $data['pizza_id'])->exists()) {
+                $skipped[] = $data;
+                continue; // or log or collect invalid rows
+            }
+
+            $batch[] = [
+                'order_details_id' => $data['order_details_id'],
+                'order_id' => $data['order_id'],
+                'pizza_id' => $data['pizza_id'],
+                'quantity' => $data['quantity'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            if (count($batch) >= $batchSize) {
+                $this->insertOrUpdateOrderDetails($batch);
+                $batch = [];
+            }
+        }
+
+        return response()->json([
+            'message' => "Orders uploaded successfully.",
+            'rows' => $rowCount,
+            'skipped' => count($skipped)
+        ]);
     }
 
     private function importCsv($file, $callback)
@@ -150,9 +207,24 @@ class CsvUploadController extends Controller
     private function insertOrUpdateOrders(array $orders)
     {
         foreach ($orders as $order) {
-            \App\Models\Order::updateOrCreate(
+            Order::updateOrCreate(
                 ['id' => $order['id']],
                 ['date' => $order['date'], 'time' => $order['time']]
+            );
+        }
+    }
+
+    private function insertOrUpdateOrderDetails(array $orders)
+    {
+        foreach ($orders as $data) {
+            OrderDetail::updateOrCreate(
+                ['order_details_id' => $data['order_details_id']],
+                [
+                    'id' => $data['order_id'],
+                    'pizza_id' => $data['pizza_id'],
+                    'quantity' => $data['quantity'],
+                    'updated_at' => $data['updated_at'],
+                ]
             );
         }
     }
