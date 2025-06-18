@@ -148,7 +148,7 @@ class CsvUploadController extends Controller
             $rowCount++;
 
             if (count($row) !== count($header)) {
-                continue; // Skip malformed rows
+                continue;
             }
 
             $data = array_combine($header, $row);
@@ -159,15 +159,15 @@ class CsvUploadController extends Controller
                 continue;
             }
 
-            // ✅ Check foreign key existence
+            // Check foreign key existence
             if (!Order::where('id', $data['order_id'])->exists()) {
                 $skipped[] = $data;
-                continue; // or log or collect invalid rows
+                continue;
             }
 
             if (!Pizza::where('pizza_id', $data['pizza_id'])->exists()) {
                 $skipped[] = $data;
-                continue; // or log or collect invalid rows
+                continue;
             }
 
             $batch[] = [
