@@ -11,7 +11,7 @@ class UploadOrders extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class UploadOrders extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'file' => 'required|file|mimes:csv,txt|max:2048',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'csv.required' => 'Please upload a CSV file.',
+            'csv.file' => 'The uploaded file must be a valid file.',
+            'csv.mimes' => 'The file must be of type: csv or txt.',
+            'csv.max' => 'The file may not be greater than 2MB.',
         ];
     }
 }
