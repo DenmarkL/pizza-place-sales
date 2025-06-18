@@ -38,7 +38,11 @@ class CsvUploadController extends Controller
         $this->importCsv($request->file('file'), function ($data) {
             PizzaType::updateOrCreate(
                 ['pizza_type_id' => $data['pizza_type_id']],
-                ['category' => $data['category'], 'name' => $data['name'], 'ingredients' => $this->sanitizeString($data['ingredients'])]
+                [
+                    'category' => $data['category'],
+                    'name' => $data['name'],
+                    'ingredients' => $this->sanitizeString($data['ingredients'])
+                ]
             );
         });
         return response()->json(['message' => 'Pizza types uploaded.']);
@@ -46,7 +50,7 @@ class CsvUploadController extends Controller
 
     public function uploadPizzas(UploadPizzas $request)
     {
-        $requiredHeaders = ['pizza_type_id', 'name', 'category', 'ingredients'];
+        $requiredHeaders = ['pizza_id', 'pizza_type_id', 'size', 'price'];
 
         $file = $request->file('file');
         $result = validate_csv_headers($file, $requiredHeaders);
@@ -57,13 +61,18 @@ class CsvUploadController extends Controller
 
         $handle = $result['handle'];
         $header = $result['header'];
-        $request->validate(['file' => 'required|file|mimes:csv,txt']);
-        $this->importCsv($request->file('file'), function ($data) {
+
+        $this->importCsv($file, function ($data) {
             Pizza::updateOrCreate(
-                ['pizza_type_id' => $data['pizza_type_id'], 'size' => $data['size']],
-                ['price' => $data['price']]
+                ['pizza_id' => $data['pizza_id']],
+                [
+                    'pizza_type_id' => $data['pizza_type_id'],
+                    'size' => $data['size'],
+                    'price' => $data['price']
+                ]
             );
         });
+
         return response()->json(['message' => 'Pizzas uploaded.']);
     }
 

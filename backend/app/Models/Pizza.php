@@ -9,6 +9,7 @@ class Pizza extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'pizza_id',
         'pizza_type_id',
         'size',
         'price',
