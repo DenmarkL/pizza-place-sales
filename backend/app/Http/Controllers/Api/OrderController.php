@@ -14,7 +14,7 @@ class OrderController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $orders = Order::with('items')
+        $orders = Order::with('items.pizza.type')
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('id', '=', $search);

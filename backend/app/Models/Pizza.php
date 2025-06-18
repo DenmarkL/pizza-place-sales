@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Pizza extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'pizza_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'pizza_id',
         'pizza_type_id',

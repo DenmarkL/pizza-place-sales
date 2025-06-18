@@ -40,7 +40,7 @@
               <TableCell>{{ order.date }}</TableCell>
               <TableCell>{{ order.time }}</TableCell>
               <TableCell>
-                {{ order.items.map(item => `${item.quantity} ${item.pizza_id}`).join(', ') }}
+                {{ order.items.map(item => `${item.quantity} ${item.pizza.type.name}`).join(', ') }}
               </TableCell>
             </TableRow>
           </TableBody>
