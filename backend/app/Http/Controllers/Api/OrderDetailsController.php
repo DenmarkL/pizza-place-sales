@@ -25,11 +25,19 @@ class OrderDetailsController extends Controller
 
     public function top_pizzas()
     {
-        $top = OrderDetail::select('pizza_id', DB::raw('SUM(quantity) as total_quantity'))
+        $top = OrderDetail::with(['pizza.pizzaType'])
+            ->select('pizza_id', DB::raw('SUM(quantity) as total_quantity'))
             ->groupBy('pizza_id')
             ->orderByDesc('total_quantity')
             ->take(5)
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'pizza_id' => $item->pizza_id,
+                    'pizza_name' => $item->pizza->pizzaType->name ?? 'Unknown',
+                    'total_quantity' => $item->total_quantity,
+                ];
+            });
 
         return response()->json($top);
     }

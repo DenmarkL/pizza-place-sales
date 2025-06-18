@@ -22,6 +22,11 @@ class Pizza extends Model
 
     public function orderItems()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    public function pizzaType()
+    {
+        return $this->belongsTo(PizzaType::class, 'pizza_type_id', 'pizza_type_id');
     }
 }
