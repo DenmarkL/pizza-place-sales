@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('pizzas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pizza_type_id')
-                ->constrained('pizza_types')
-                ->onDelete('cascade');
+            $table->string('pizza_type_id');
             $table->string('size');
             $table->decimal('price', 8, 2);
             $table->timestamps();

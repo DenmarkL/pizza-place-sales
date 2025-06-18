@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pizza_types', function (Blueprint $table) {
-            $table->id();
+            $table->string('pizza_type_id')->primary();
             $table->string('name');
             $table->string('category');
             $table->text('ingredients');
