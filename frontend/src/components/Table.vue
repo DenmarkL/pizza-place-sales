@@ -111,7 +111,7 @@ function onRangeUpdate(range: DateRangeType) {
 // Fetch orders from API
 const fetchOrders = async (page = 1) => {
 
-  const res = await axios.get('http://127.0.0.1:8000/api/orders', {
+  const res = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/orders`, {
     params: {
       page,
       search: search.value,
