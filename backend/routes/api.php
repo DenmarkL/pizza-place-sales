@@ -35,3 +35,4 @@ Route::get('/orders', [OrderController::class, 'index']);
 Route::get('/order-details', [OrderDetailsController::class, 'index']);
 Route::get('/order-details-total-sales', [OrderDetailsController::class, 'total_sales']);
 Route::get('/order-details-top-pizzas', [OrderDetailsController::class, 'top_pizzas']);
+Route::get('/dashboard-metrics', [OrderController::class, 'metrics']);

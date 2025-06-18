@@ -24,4 +24,9 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Pizza::class, 'pizza_id', 'pizza_id');
     }
+
+    public function type()
+    {
+        return $this->belongsTo(PizzaType::class, 'pizza_type_id');
+    }
 }
