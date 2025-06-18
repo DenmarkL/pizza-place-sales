@@ -50,7 +50,7 @@ const chartData = {
 }
 
 const chartOptions = {
-  responsive: true,
+  responsive: false,
   maintainAspectRatio: true,
   plugins: {
     legend: {
