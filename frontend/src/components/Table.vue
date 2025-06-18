@@ -1,4 +1,5 @@
 <template>
+<div class="grid grid-cols-1 gap-1">
   <Card>
     <CardHeader>
       <CardTitle>Orders</CardTitle>
@@ -69,6 +70,7 @@
       </div>
     </CardContent>
   </Card>
+</div>
 </template>
 
 <script setup lang="ts">
