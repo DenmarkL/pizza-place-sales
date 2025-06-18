@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CsvUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/upload/pizza-types', [CsvUploadController::class, 'uploadPizzaTypes']);
+Route::post('/upload/pizzas', [CsvUploadController::class, 'uploadPizzas']);
+Route::post('/upload/orders', [CsvUploadController::class, 'uploadOrders']);
+Route::post('/upload/order-items', [CsvUploadController::class, 'uploadOrderItems']);
